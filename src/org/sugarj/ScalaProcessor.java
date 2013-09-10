@@ -15,6 +15,7 @@ import org.sugarj.common.FileCommands;
 import org.sugarj.common.StringCommands;
 import org.sugarj.common.path.Path;
 import org.sugarj.common.path.RelativePath;
+import org.sugarj.scala.ScalaCommands;
 
 /**
  * @author Florian Jakob &lt;f_jakob@rbg.informatik.tu-darmstadt.de&gt;
@@ -124,15 +125,7 @@ public class ScalaProcessor extends AbstractBaseProcessor {
 
   @Override
   public List<Path> compile(List<Path> outFiles, Path bin, List<Path> includePaths) throws IOException {
-    List<String> cmds = new LinkedList<String>();
-    cmds.add(SCALAC_COMMAND);
-
-    List<Path> generatedFiles = new LinkedList<Path>();
-    // TODO …
-
-    new CommandExecution(false).execute(cmds.toArray(new String[cmds.size()]));
-
-    return generatedFiles;
+    return ScalaCommands.scalac(outFiles, bin, includePaths);
   }
 
   @Override

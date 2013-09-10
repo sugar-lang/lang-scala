@@ -7,6 +7,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.spoofax.interpreter.terms.IStrategoTerm;
+import org.sugarj.common.ATermCommands;
+import org.sugarj.common.ATermCommands.MatchError;
 import org.sugarj.common.path.Path;
 
 /**
@@ -100,30 +102,35 @@ public class ScalaLanguage extends AbstractBaseLanguage {
   }
 
   @Override
-  public boolean isImportDecl(IStrategoTerm decl) {
-    return isApplication(decl, "Import");
+  public boolean isImportDecl(IStrategoTerm term) {
+    return isApplicationOrTopStat(term, "Import");
   }
 
   @Override
-  public boolean isBaseDecl(IStrategoTerm decl) {
-    String[] baseDecls = {"PackageDeclaration", "Class", "Object", "CaseClass", "CaseObject", "Trait"};
-    for (String baseDecl: baseDecls) {
-      if (isApplication(decl, baseDecl)) {
-        return true;
-      }
+  public boolean isBaseDecl(IStrategoTerm term) {
+    return isApplicationOrTopStat(term, "TopTmplDef") || isNamespaceDec(term);
+  }
+
+  @Override
+  public boolean isPlainDecl(IStrategoTerm term) {
+    return isApplication(term, "PlainDec");
+  }
+
+  public boolean isNamespaceDec(IStrategoTerm term) {
+    return isApplication(term, "PackageDeclaration");
+  }
+
+  private boolean isApplicationOrTopStat(IStrategoTerm decl, String cons) {
+    return isApplication(decl, cons) || isTopStatSemiSubterm(decl, cons);
+  }
+
+  private boolean isTopStatSemiSubterm(IStrategoTerm decl, String cons) {
+    try {
+      IStrategoTerm subterm =
+          ATermCommands.getApplicationSubterm(decl, "TopStatSemi", 0);
+      return isApplication(subterm, cons);
+    } catch (NullPointerException | MatchError e) {
+      return false;
     }
-    return false;
-  }
-
-  @Override
-  public boolean isPlainDecl(IStrategoTerm decl) {
-    if (isApplication(decl, "PlainDec"))
-      return true;
-    return false;
-  }
-
-  public boolean isNamespaceDec(IStrategoTerm toplevelDecl) {
-    // TODO
-    return false;
   }
 }
