@@ -28,12 +28,7 @@ public class ImportTermExtractor {
   private String fromImportExpr(IStrategoTerm importExpr) {
     IStrategoAppl stableId = (IStrategoAppl) ATermCommands.getApplicationSubterm(importExpr, "ImportExpr", 0);
     String pretty = proc.prettyPrint(stableId);
-    String compacted = compact(pretty);
-    return compacted;
-  }
-
-  private String compact(String pretty) {
-    return pretty.replaceAll(" ", "");
+    return pretty;
   }
 
   public String extractFirst(IStrategoTerm importTerm) {

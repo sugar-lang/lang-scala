@@ -8,10 +8,8 @@ exports
     ScalaPackageDeclarationSemi -> ToplevelDeclaration
     ScalaTopStatSemi            -> ToplevelDeclaration
     ScalaExtension              -> ToplevelDeclaration
-    ScalaExtensionImport        -> ScalaTopStat
 
     ScalaExtensionHead ScalaExtensionBody -> ScalaExtension {"ScalaExtension"}
     "sugar" ScalaId        -> ScalaExtensionHead {"ScalaExtensionHead"}
     "{" ExtensionElem* "}" -> ScalaExtensionBody {"ScalaExtensionBody"}
 
-    "extend" ScalaStableId -> ScalaExtensionImport {"ScalaExtensionImport"}

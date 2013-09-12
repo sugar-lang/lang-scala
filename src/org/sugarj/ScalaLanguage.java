@@ -103,13 +103,12 @@ public class ScalaLanguage extends AbstractBaseLanguage {
 
   @Override
   public boolean isImportDecl(IStrategoTerm term) {
-    return isApplicationOrTopStat(term, "ScalaExtensionImport");
+    return isApplicationOrTopStat(term, "Import");
   }
 
   @Override
   public boolean isBaseDecl(IStrategoTerm term) {
     return isApplicationOrTopStat(term, "TopTmplDef") ||
-        isApplicationOrTopStat(term, "Import") ||
         isNamespaceDec(term);
   }
 

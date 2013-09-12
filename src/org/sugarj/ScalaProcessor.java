@@ -4,7 +4,6 @@ import static org.sugarj.common.ATermCommands.getApplicationSubterm;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -40,6 +39,10 @@ public class ScalaProcessor extends AbstractBaseProcessor {
 
   @Override
   public String getGeneratedSource() {
+    if (body.isEmpty()) {
+      return "";
+    }
+
     StringBuilder sourceBuilder = new StringBuilder();
 
     if (moduleHeader != null) {
@@ -102,17 +105,7 @@ public class ScalaProcessor extends AbstractBaseProcessor {
     if (text != null)
       body.add(text);
 
-    List<IStrategoTerm> importTerms = TermFinder.select("Import", toplevelDecl);
-    List<String> imports = new ArrayList<String>();
-    for (IStrategoTerm importTerm : importTerms) {
-      imports.addAll(importTermExtractor.extract(importTerm));
-    }
-
-    for (int i = 0; i < imports.size(); i++) {
-      imports.set(i, fqnToPath(imports.get(i)));
-    }
-
-    return imports;
+    return Collections.emptyList();
   }
 
   private String fqnToPath(String string) {
@@ -121,19 +114,15 @@ public class ScalaProcessor extends AbstractBaseProcessor {
 
   @Override
   public String getModulePathOfImport(IStrategoTerm toplevelDecl) {
-    IStrategoTerm extImport = TermFinder.find("ScalaExtensionImport", toplevelDecl);
-    String modulePath = fqnToPath(extractExtensionImport(extImport));
-    return modulePath;
-  }
-
-  private String extractExtensionImport(IStrategoTerm toplevelDecl) {
-    String fqnExtension = prettyPrint(getApplicationSubterm(toplevelDecl, "ScalaExtensionImport", 0));
-    String squashed = fqnExtension.replace(" ", "");
-    return squashed;
+    IStrategoTerm importTerm = TermFinder.find("Import", toplevelDecl);
+    String extracted = importTermExtractor.extractFirst(importTerm);
+    String converted = fqnToPath(extracted);
+    return converted;
   }
 
   @Override
   public void processModuleImport(IStrategoTerm toplevelDecl) throws IOException {
+    imports.add(prettyPrint(toplevelDecl));
   }
 
   @Override

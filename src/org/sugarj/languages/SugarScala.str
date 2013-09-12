@@ -6,4 +6,3 @@ signature
     ScalaExtension     : ScalaExtensionHead * ScalaExtensionBody -> ScalaExtension
     ScalaExtensionHead : ScalaId -> ScalaExtensionHead
     ScalaExtensionBody : List(ExtensionElem) -> ScalaExtensionBody
-    ScalaExtensionImport : ScalaStableId -> ScalaExtensionImport

@@ -7,7 +7,7 @@
    StableThis                             -- KW["this"],
    StableSuper                            -- KW["super"] _1,
    StableSuper.1:opt                      -- _1,
-   StableId                               -- _1 KW["."] _2,
+   StableId                               -- H hs=0 [_1 KW["."] _2],
    StableId.1:iter-sep                    -- _1 KW["."],
    ClassQualifier                         -- KW["["] _1 KW["]"],
    SingletonType                          -- _1 KW["."] KW["type"],
