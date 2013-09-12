@@ -2,52 +2,55 @@ package org.sugarj;
 
 import static org.sugarj.common.ATermCommands.getApplicationSubterm;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.spoofax.interpreter.terms.IStrategoTerm;
 import org.sugarj.common.ATermCommands;
-import org.sugarj.common.CommandExecution;
 import org.sugarj.common.Environment;
 import org.sugarj.common.FileCommands;
 import org.sugarj.common.StringCommands;
 import org.sugarj.common.path.Path;
 import org.sugarj.common.path.RelativePath;
+import org.sugarj.scala.ImportTermExtractor;
 import org.sugarj.scala.ScalaCommands;
+import org.sugarj.util.TermFinder;
 
 /**
  * @author Florian Jakob &lt;f_jakob@rbg.informatik.tu-darmstadt.de&gt;
  */
 public class ScalaProcessor extends AbstractBaseProcessor {
+
   private static final long serialVersionUID = 9026624278268457077L;
-  private static final String SCALAC_COMMAND = "scalac";
+
   private String moduleHeader;
   private List<String> imports = new LinkedList<String>();
   private List<String> body = new LinkedList<String>();
-  private boolean hasExtension = false;
 
-  private Environment environment;
-  private RelativePath sourceFile;
   private Path outFile;
-
-  private String relNamespaceName;
-  private String moduleName;
+  private String namespaceName;
 
   private IStrategoTerm ppTable;
 
+  private ImportTermExtractor importTermExtractor = new ImportTermExtractor(this);
+
   @Override
   public String getGeneratedSource() {
-    if (moduleHeader == null)
-      return "";
+    StringBuilder sourceBuilder = new StringBuilder();
 
-    if (hasExtension && body.isEmpty())
-      return "";
+    if (moduleHeader != null) {
+      sourceBuilder.append(moduleHeader).append("\n\n");
+    }
 
-    return moduleHeader + "\n"
-         + StringCommands.printListSeparated(imports, "\n") + "\n"
-         + StringCommands.printListSeparated(body, "\n");
+    sourceBuilder.append(StringCommands.printListSeparated(imports, "\n")).append("\n\n");
+    sourceBuilder.append(StringCommands.printListSeparated(body, "\n"));
+    String source = sourceBuilder.toString();
+
+    return source;
   }
 
   @Override
@@ -57,7 +60,7 @@ public class ScalaProcessor extends AbstractBaseProcessor {
 
   @Override
   public String getNamespace() {
-    return relNamespaceName;
+    return namespaceName;
   }
 
   @Override
@@ -65,20 +68,22 @@ public class ScalaProcessor extends AbstractBaseProcessor {
     return ScalaLanguage.getInstance();
   }
 
-
-
   /*
    * processing stuff follows here
    */
   @Override
   public void init(RelativePath sourceFile, Environment environment) {
-    this.environment = environment;
-    this.sourceFile = sourceFile;
     outFile = environment.createOutPath(FileCommands.dropExtension(sourceFile.getRelativePath()) + "." + ScalaLanguage.getInstance().getBaseFileExtension());
   }
 
   private void processNamespaceDecl(IStrategoTerm toplevelDecl) throws IOException {
+    namespaceName = extractNameFromPackageDeclaration(toplevelDecl);
     moduleHeader = prettyPrint(toplevelDecl);
+  }
+
+  private String extractNameFromPackageDeclaration(IStrategoTerm toplevelDecl) {
+    String packageDeclarationName = prettyPrint(getApplicationSubterm(toplevelDecl, "PackageDeclaration", 0));
+    return packageDeclarationName;
   }
 
   @Override
@@ -88,7 +93,6 @@ public class ScalaProcessor extends AbstractBaseProcessor {
       return Collections.emptyList();
     }
 
-    //IStrategoTerm term = getApplicationSubterm(toplevelDecl, "ScalaBody", 0);
     String text = null;
     try {
       text = prettyPrint(toplevelDecl);
@@ -97,30 +101,55 @@ public class ScalaProcessor extends AbstractBaseProcessor {
     }
     if (text != null)
       body.add(text);
-    return Collections.emptyList();
+
+    List<IStrategoTerm> importTerms = TermFinder.select("Import", toplevelDecl);
+    List<String> imports = new ArrayList<String>();
+    for (IStrategoTerm importTerm : importTerms) {
+      imports.addAll(importTermExtractor.extract(importTerm));
+    }
+
+    for (int i = 0; i < imports.size(); i++) {
+      imports.set(i, fqnToPath(imports.get(i)));
+    }
+
+    return imports;
+  }
+
+  private String fqnToPath(String string) {
+    return string.replaceAll("\\.", File.separator);
   }
 
   @Override
   public String getModulePathOfImport(IStrategoTerm toplevelDecl) {
-    return prettyPrint(getApplicationSubterm(toplevelDecl, "Import", 2)).replace('.', '/');
+    IStrategoTerm extImport = TermFinder.find("ScalaExtensionImport", toplevelDecl);
+    String modulePath = fqnToPath(extractExtensionImport(extImport));
+    return modulePath;
+  }
+
+  private String extractExtensionImport(IStrategoTerm toplevelDecl) {
+    String fqnExtension = prettyPrint(getApplicationSubterm(toplevelDecl, "ScalaExtensionImport", 0));
+    String squashed = fqnExtension.replace(" ", "");
+    return squashed;
   }
 
   @Override
   public void processModuleImport(IStrategoTerm toplevelDecl) throws IOException {
-    imports.add(prettyPrint(toplevelDecl));
   }
 
   @Override
   public String getExtensionName(IStrategoTerm decl) throws IOException {
-    hasExtension = true;
-    return moduleName;
+    IStrategoTerm scalaExtensionHead = getApplicationSubterm(decl, "ScalaExtension", 0);
+    IStrategoTerm scalaId = getApplicationSubterm(scalaExtensionHead, "ScalaExtensionHead", 0);
+    String extensionName = prettyPrint(scalaId);
+    return extensionName;
   }
 
-  private String prettyPrint(IStrategoTerm term) {
+  public String prettyPrint(IStrategoTerm term) {
     if (ppTable == null)
       ppTable = ATermCommands.readPrettyPrintTable(getLanguage().ensureFile("org/sugarj/languages/Scala.pp").getAbsolutePath());
 
-    return ATermCommands.prettyPrint(ppTable, term, interp);
+    String prettyPrint = ATermCommands.prettyPrint(ppTable, term, interp);
+    return prettyPrint;
   }
 
   @Override
@@ -135,6 +164,7 @@ public class ScalaProcessor extends AbstractBaseProcessor {
 
   @Override
   public IStrategoTerm getExtensionBody(IStrategoTerm decl) {
-    return getApplicationSubterm(decl, "ExtensionBody", 0);
+    IStrategoTerm scalaExtensionBody = getApplicationSubterm(decl, "ScalaExtension", 1);
+    return getApplicationSubterm(scalaExtensionBody, "ScalaExtensionBody", 0);
   }
 }

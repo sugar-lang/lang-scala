@@ -21,9 +21,11 @@ public class ScalaCommands {
   private static final String VERBOSE_FLAG = "-verbose";
   private static final String SCALAC = "scalac";
 
+  private static boolean DEBUG = true;
+
   public static List<Path> scalac(List<Path> outFiles, Path bin, List<Path> includePaths) {
     List<String> args = buildArgs(outFiles, bin, includePaths);
-    String[][] output = new CommandExecution(true).execute(args.toArray(new String[args.size()]));
+    String[][] output = new CommandExecution(!DEBUG).execute(args.toArray(new String[args.size()]));
     String[] stderr = output[1];
     List<Path> generatedFiles = parseForWrittenFiles(stderr);
     return generatedFiles;

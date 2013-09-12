@@ -6,5 +6,12 @@ imports org/sugarj/languages/Scala
 exports
   context-free syntax
     ScalaPackageDeclarationSemi -> ToplevelDeclaration
-    ScalaTopStatSemi -> ToplevelDeclaration
+    ScalaTopStatSemi            -> ToplevelDeclaration
+    ScalaExtension              -> ToplevelDeclaration
+    ScalaExtensionImport        -> ScalaTopStat
 
+    ScalaExtensionHead ScalaExtensionBody -> ScalaExtension {"ScalaExtension"}
+    "sugar" ScalaId        -> ScalaExtensionHead {"ScalaExtensionHead"}
+    "{" ExtensionElem* "}" -> ScalaExtensionBody {"ScalaExtensionBody"}
+
+    "extend" ScalaStableId -> ScalaExtensionImport {"ScalaExtensionImport"}

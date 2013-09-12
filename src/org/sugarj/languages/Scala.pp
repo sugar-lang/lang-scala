@@ -442,7 +442,7 @@
    RepeatedParam                          -- _1 KW["*"],
    ProcDcl                                -- _1,
    ProcDef                                -- _1 KW["{"] _2 KW["}"],
-   Import                                 -- V  [H  [KW["import"]] _1],
+   Import                                 -- H  [KW["import"]] _1,
    Import.1:iter-sep                      -- _1 KW[","],
    ImportExpr                             -- _1,
    WildcardImportExpr                     -- _1 KW["."] KW["_"],
