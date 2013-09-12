@@ -1,5 +1,6 @@
 package org.sugarj.scala;
 
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -7,6 +8,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.sugarj.common.CommandExecution;
+import org.sugarj.common.CommandExecution.ExecutionError;
 import org.sugarj.common.path.AbsolutePath;
 import org.sugarj.common.path.Path;
 
@@ -21,14 +23,20 @@ public class ScalaCommands {
   private static final String VERBOSE_FLAG = "-verbose";
   private static final String SCALAC = "scalac";
 
-  private static boolean DEBUG = true;
-
   public static List<Path> scalac(List<Path> outFiles, Path bin, List<Path> includePaths) {
     List<String> args = buildArgs(outFiles, bin, includePaths);
-    String[][] output = new CommandExecution(!DEBUG).execute(args.toArray(new String[args.size()]));
-    String[] stderr = output[1];
-    List<Path> generatedFiles = parseForWrittenFiles(stderr);
-    return generatedFiles;
+    try {
+      String[][] output = new CommandExecution(!isDebug()).execute(args.toArray(new String[args.size()]));
+      String[] stderr = output[1];
+      List<Path> generatedFiles = parseForWrittenFiles(stderr);
+      return generatedFiles;
+    } catch (ExecutionError e){
+      return Collections.emptyList();
+    }
+  }
+
+  private static boolean isDebug() {
+    return (System.getProperty("debug") != null);
   }
 
   private static List<String> buildArgs(List<Path> outFiles, Path bin, List<Path> includePaths) {
