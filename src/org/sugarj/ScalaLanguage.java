@@ -35,7 +35,7 @@ public class ScalaLanguage extends AbstractBaseLanguage {
 
   @Override
   public String getVersion() {
-    return "scala-0.1.0";
+    return "scala-0.2.0";
   }
 
   @Override
@@ -50,7 +50,7 @@ public class ScalaLanguage extends AbstractBaseLanguage {
 
   @Override
   public String getSugarFileExtension() {
-    return "sugsc";
+    return "sugs";
   }
 
   @Override
