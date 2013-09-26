@@ -148,7 +148,7 @@ public class ScalaProcessor extends AbstractBaseProcessor {
 
   @Override
   public boolean isModuleExternallyResolvable(String relModulePath) {
-    return false;
+    return ScalaCommands.isExternallyResolvable(relModulePath);
   }
 
   @Override

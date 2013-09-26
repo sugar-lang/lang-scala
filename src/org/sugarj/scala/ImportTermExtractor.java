@@ -18,11 +18,21 @@ public class ImportTermExtractor {
 
   public List<String> extract(IStrategoTerm importTerm) {
     List<String> imports = new ArrayList<String>();
-    List<IStrategoTerm> importExprs = TermFinder.select("ImportExpr", importTerm);
-    for (IStrategoTerm importExpr: importExprs) {
-      imports.add(fromImportExpr(importExpr));
+    IStrategoTerm importExprList = ATermCommands.getApplicationSubterm(importTerm, "Import", 0);
+    for (IStrategoTerm child: importExprList) {
+      if (ATermCommands.isApplication(child, "ImportExpr")) {
+        imports.add(fromImportExpr(child));
+      } else if (ATermCommands.isApplication(child, "WildcardImportExpr")) {
+        imports.add(fromWildcardImportExpr(child));
+      }
     }
     return imports;
+  }
+
+  private String fromWildcardImportExpr(IStrategoTerm wildcardImportExpr) {
+    IStrategoAppl stableId = (IStrategoAppl) ATermCommands.getApplicationSubterm(wildcardImportExpr, "WildcardImportExpr", 0);
+    String pretty = proc.prettyPrint(stableId) + "._";
+    return pretty;
   }
 
   private String fromImportExpr(IStrategoTerm importExpr) {

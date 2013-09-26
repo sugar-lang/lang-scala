@@ -1,5 +1,9 @@
 package org.sugarj.scala;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -14,10 +18,6 @@ import org.sugarj.common.path.Path;
 
 public class ScalaCommands {
   private static final String ARG_SEP = " ";
-  private static final String OS_NAME_WIN_IDENT = "win";
-  private static final String OS_NAME_PROPERTY = "os.name";
-  private static final String CLASSPATH_SEP = ":";
-  private static final String CLASSPATH_SEP_WIN = ";";
   private static final String CLASSPATH_PARAM = "-classpath";
   private static final String DIR_PARAM = "-d";
   private static final String VERBOSE_FLAG = "-verbose";
@@ -35,8 +35,37 @@ public class ScalaCommands {
     }
   }
 
+  public static boolean isExternallyResolvable(String modulename) {
+    String modname = modulename.replace(File.separatorChar, '.');
+    try {
+      File tmpFile = File.createTempFile("extResolvable", ".scala");
+      FileWriter fw = new FileWriter(tmpFile);
+      fw.write(String.format("import %s", modname));
+      fw.close();
+      List<String> args = buildArgs(tmpFile);
+      new CommandExecution(!isDebug()).execute(args.toArray(new String[args.size()]));
+      return true;
+    } catch (IOException e) {
+      e.printStackTrace();
+      return false;
+    } catch (ExecutionError e) {
+      return false;
+    }
+  }
+
   private static boolean isDebug() {
     return (System.getProperty("debug") != null);
+  }
+
+  private static List<String> buildArgs(File outFile) throws IOException {
+    java.nio.file.Path tmpDir = Files.createTempDirectory(null);
+    List<String> args = new LinkedList<String>();
+    args.add(SCALAC);
+    args.add(VERBOSE_FLAG);
+    args.add(DIR_PARAM);
+    args.add(tmpDir.toString());
+    args.add(outFile.toString());
+    return args;
   }
 
   private static List<String> buildArgs(List<Path> outFiles, Path bin, List<Path> includePaths) {
@@ -64,17 +93,8 @@ public class ScalaCommands {
   }
 
   private static String toClassPath(List<Path> includePaths) {
-    String pathSep = determineClassPathSeparator();
+    String pathSep = Character.toString(File.pathSeparatorChar);
     return implode(includePaths, pathSep);
-  }
-
-  private static String determineClassPathSeparator() {
-    String os = System.getProperty(OS_NAME_PROPERTY).toLowerCase();
-    if (os.contains(OS_NAME_WIN_IDENT)) {
-      return CLASSPATH_SEP_WIN;
-    } else {
-      return CLASSPATH_SEP;
-    }
   }
 
   private static String implode(Iterable<? extends Object> iterable, String sep) {
