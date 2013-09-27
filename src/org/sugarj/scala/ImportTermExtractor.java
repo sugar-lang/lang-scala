@@ -7,7 +7,6 @@ import org.spoofax.interpreter.terms.IStrategoAppl;
 import org.spoofax.interpreter.terms.IStrategoTerm;
 import org.sugarj.ScalaProcessor;
 import org.sugarj.common.ATermCommands;
-import org.sugarj.util.TermFinder;
 
 public class ImportTermExtractor {
   private ScalaProcessor proc;
