@@ -7,7 +7,7 @@ Bundle-Activator: org.sugarj.scala.Activator
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.sugarj.common,
- org.sugarj.languagelib,
+ org.sugarj.baselang,
  org.spoofax.terms,
  org.strategoxt.strj
 Bundle-ActivationPolicy: lazy
