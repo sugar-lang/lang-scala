@@ -23,14 +23,19 @@ public class ScalaCommands {
   private static final String VERBOSE_FLAG = "-verbose";
   private static final String SCALAC = "scalac";
 
-  public static List<Path> scalac(List<Path> outFiles, Path bin, List<Path> includePaths) {
-    List<String> args = buildArgs(outFiles, bin, includePaths);
+  public static List<Path> scalac(List<Path> outFiles, Path bin,
+      List<Path> includePaths) {
     try {
-      String[][] output = new CommandExecution(!isDebug()).execute(args.toArray(new String[args.size()]));
+      String[][] output = new CommandExecution(true).
+          execute(buildArgs(outFiles, bin, includePaths));
       String[] stderr = output[1];
       List<Path> generatedFiles = parseForWrittenFiles(stderr);
       return generatedFiles;
     } catch (ExecutionError e){
+      try {
+        new CommandExecution(false).
+          execute(buildArgs(outFiles, bin, includePaths, false));
+      } catch (ExecutionError _) {}
       return Collections.emptyList();
     }
   }
@@ -42,8 +47,7 @@ public class ScalaCommands {
       FileWriter fw = new FileWriter(tmpFile);
       fw.write(String.format("import %s", modname));
       fw.close();
-      List<String> args = buildArgs(tmpFile);
-      new CommandExecution(!isDebug()).execute(args.toArray(new String[args.size()]));
+      new CommandExecution(true).execute(buildArgs(tmpFile));
       return true;
     } catch (IOException e) {
       e.printStackTrace();
@@ -53,11 +57,7 @@ public class ScalaCommands {
     }
   }
 
-  private static boolean isDebug() {
-    return (System.getProperty("debug") != null);
-  }
-
-  private static List<String> buildArgs(File outFile) throws IOException {
+  private static String[] buildArgs(File outFile) throws IOException {
     java.nio.file.Path tmpDir = Files.createTempDirectory(null);
     List<String> args = new LinkedList<String>();
     args.add(SCALAC);
@@ -65,19 +65,25 @@ public class ScalaCommands {
     args.add(DIR_PARAM);
     args.add(tmpDir.toString());
     args.add(outFile.toString());
-    return args;
+    return args.toArray(new String[args.size()]);
   }
 
-  private static List<String> buildArgs(List<Path> outFiles, Path bin, List<Path> includePaths) {
+  private static String[] buildArgs(List<Path> outFiles, Path bin,
+      List<Path> includePaths) {
+    return buildArgs(outFiles, bin, includePaths, true);
+  }
+
+  private static String[] buildArgs(List<Path> outFiles, Path bin,
+      List<Path> includePaths, boolean verbose) {
     List<String> args = new LinkedList<String>();
     args.add(SCALAC);
-    args.add(VERBOSE_FLAG);
+    if (verbose) args.add(VERBOSE_FLAG);
     args.add(DIR_PARAM);
     args.add(bin.getAbsolutePath());
     args.add(CLASSPATH_PARAM);
     args.add(toClassPath(includePaths));
     args.add(implode(outFiles, ARG_SEP));
-    return args;
+    return args.toArray(new String[args.size()]);
   }
 
   private static List<Path> parseForWrittenFiles(String[] input) {
