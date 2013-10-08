@@ -80,49 +80,49 @@ signature
     ArgumentExprs               : Option(NoLExprs) -> ArgumentExprs
                                 : Path -> NoLExpr
                                 : BlockExpr -> NoLExpr
-    DesignatorNoLExpr           : NoLExpr * Id -> NoLExpr
-    AssignmentNoLExpr           : Id * NoLExpr -> NoLExpr
-    AscriptionNoLExpr           : NoLExpr * Ascription -> NoLExpr
-    ReturnNoLExpr               : Option(NoLExpr) -> NoLExpr
-    ThrowNoLExpr                : NoLExpr -> NoLExpr
-    ForYieldNoLExpr             : List(EnumeratorSemi) * NoLExpr -> NoLExpr
-    ForNoLExpr                  : List(EnumeratorSemi) * NoLExpr -> NoLExpr
-    DoWhileNoLExpr              : NoLExpr * NoLExpr -> NoLExpr
-    TryCatchFinallyNoLExpr      : NoLExpr * NoLExpr * NoLExpr -> NoLExpr
-    TryFinallyNoLExpr           : NoLExpr * NoLExpr -> NoLExpr
-    TryCatchNoLExpr             : NoLExpr * NoLExpr -> NoLExpr
-    TryNoLExpr                  : NoLExpr -> NoLExpr
-    WhileNoLExpr                : NoLExpr * NoLExpr -> NoLExpr
-    IfElseNoLExpr               : NoLExpr * NoLExpr * NoLExpr -> NoLExpr
-    IfNoLExpr                   : NoLExpr * NoLExpr -> NoLExpr
-    WildcardFunNoLExpr          : NoLExpr -> NoLExpr
-    ImplicitFunNoLExpr          : Id * NoLExpr -> NoLExpr
-    IdFunNoLExpr                : Id * NoLExpr -> NoLExpr
-    FunNoLExpr                  : Bindings * NoLExpr -> NoLExpr
-    DesignatorAssignmentNoLExpr : NoLExpr * Id * NoLExpr -> NoLExpr
-    AccessAssignmentNoLExpr     : NoLExpr * ArgumentExprs * NoLExpr -> NoLExpr
-    MatchNoLExpr                : NoLExpr * List(CaseClause) -> NoLExpr
-    PostfixNoLExpr              : NoLExpr * Id -> NoLExpr
-    InfixNoLExpr                : NoLExpr * LetterOp * NoLExpr -> NoLExpr
-    InfixNoLExpr                : NoLExpr * BarOp * NoLExpr -> NoLExpr
-    InfixNoLExpr                : NoLExpr * CircumflexOp * NoLExpr -> NoLExpr
-    InfixNoLExpr                : NoLExpr * AmpersandOp * NoLExpr -> NoLExpr
-    InfixNoLExpr                : NoLExpr * BracketOp * NoLExpr -> NoLExpr
-    InfixNoLExpr                : NoLExpr * AssignOp * NoLExpr -> NoLExpr
-    InfixNoLExpr                : NoLExpr * ColonOp * NoLExpr -> NoLExpr
-    InfixNoLExpr                : NoLExpr * SumOp * NoLExpr -> NoLExpr
-    InfixNoLExpr                : NoLExpr * MultOp * NoLExpr -> NoLExpr
-    InfixNoLExpr                : NoLExpr * SpecialOp * NoLExpr -> NoLExpr
-    PrefixNoLExpr               : Prefix * NoLExpr -> NoLExpr
-    EtaExpansionNoLExpr         : NoLExpr -> NoLExpr
-    NewTemplateNoLExpr          : TemplateBody -> NoLExpr
-    NewClassNoLExpr             : ClassTemplate -> NoLExpr
+    DesignatorExpr              : NoLExpr * Id -> NoLExpr
+    AssignmentExpr              : Id * NoLExpr -> NoLExpr
+    AscriptionExpr              : NoLExpr * Ascription -> NoLExpr
+    ReturnExpr                  : Option(NoLExpr) -> NoLExpr
+    ThrowExpr                   : NoLExpr -> NoLExpr
+    ForYieldExpr                : List(EnumeratorSemi) * NoLExpr -> NoLExpr
+    ForExpr                     : List(EnumeratorSemi) * NoLExpr -> NoLExpr
+    DoWhileExpr                 : NoLExpr * NoLExpr -> NoLExpr
+    TryCatchFinallyExpr         : NoLExpr * NoLExpr * NoLExpr -> NoLExpr
+    TryFinallyExpr              : NoLExpr * NoLExpr -> NoLExpr
+    TryCatchExpr                : NoLExpr * NoLExpr -> NoLExpr
+    TryExpr                     : NoLExpr -> NoLExpr
+    WhileExpr                   : NoLExpr * NoLExpr -> NoLExpr
+    IfElseExpr                  : NoLExpr * NoLExpr * NoLExpr -> NoLExpr
+    IfExpr                      : NoLExpr * NoLExpr -> NoLExpr
+    WildcardFunExpr             : NoLExpr -> NoLExpr
+    ImplicitFunExpr             : Id * NoLExpr -> NoLExpr
+    IdFunExpr                   : Id * NoLExpr -> NoLExpr
+    FunExpr                     : Bindings * NoLExpr -> NoLExpr
+    DesignatorAssignmentExpr    : NoLExpr * Id * NoLExpr -> NoLExpr
+    AccessAssignmentExpr        : NoLExpr * ArgumentExprs * NoLExpr -> NoLExpr
+    MatchExpr                   : NoLExpr * List(CaseClause) -> NoLExpr
+    PostfixExpr                 : NoLExpr * Id -> NoLExpr
+    InfixExpr                   : NoLExpr * LetterOp * NoLExpr -> NoLExpr
+    InfixExpr                   : NoLExpr * BarOp * NoLExpr -> NoLExpr
+    InfixExpr                   : NoLExpr * CircumflexOp * NoLExpr -> NoLExpr
+    InfixExpr                   : NoLExpr * AmpersandOp * NoLExpr -> NoLExpr
+    InfixExpr                   : NoLExpr * BracketOp * NoLExpr -> NoLExpr
+    InfixExpr                   : NoLExpr * AssignOp * NoLExpr -> NoLExpr
+    InfixExpr                   : NoLExpr * ColonOp * NoLExpr -> NoLExpr
+    InfixExpr                   : NoLExpr * SumOp * NoLExpr -> NoLExpr
+    InfixExpr                   : NoLExpr * MultOp * NoLExpr -> NoLExpr
+    InfixExpr                   : NoLExpr * SpecialOp * NoLExpr -> NoLExpr
+    PrefixExpr                  : Prefix * NoLExpr -> NoLExpr
+    EtaExpansionExpr            : NoLExpr -> NoLExpr
+    NewTemplateExpr             : TemplateBody -> NoLExpr
+    NewClassExpr                : ClassTemplate -> NoLExpr
     TypeApplication             : NoLExpr * TypeArgs -> NoLExpr
-    TupleNoLExpr                : List(NoLExpr) -> NoLExpr
-    BlockAppNoLExpr             : NoLExpr * BlockExpr -> NoLExpr
-    AppNoLExpr                  : NoLExpr * ArgumentExprs -> NoLExpr
+    TupleExpr                   : List(NoLExpr) -> NoLExpr
+    BlockAppExpr                : NoLExpr * BlockExpr -> NoLExpr
+    AppExpr                     : NoLExpr * ArgumentExprs -> NoLExpr
                                 : Literal -> NoLExpr
-    WildcardNoLExpr             : NoLExpr
+    WildcardExpr                : NoLExpr
                                 : Path -> Expr
                                 : Literal -> Expr
                                 : BlockExpr -> Expr
