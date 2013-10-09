@@ -30,7 +30,7 @@ public class ImportTermExtractor {
 
   private String fromWildcardImportExpr(IStrategoTerm wildcardImportExpr) {
     IStrategoAppl stableId = (IStrategoAppl) ATermCommands.getApplicationSubterm(wildcardImportExpr, "WildcardImportExpr", 0);
-    String pretty = proc.prettyPrint(stableId) + "._";
+    String pretty = proc.prettyPrint(stableId);
     return pretty;
   }
 
