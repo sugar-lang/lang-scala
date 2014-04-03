@@ -1,10 +1,11 @@
 package org.sugarj.util;
 
+import static org.sugarj.common.ATermCommands.isApplication;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import org.spoofax.interpreter.terms.IStrategoTerm;
-import static org.sugarj.common.ATermCommands.*;
 
 public class TermFinder {
   public static class TermNotFoundException extends RuntimeException {

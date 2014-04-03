@@ -2,8 +2,8 @@ package org.sugarj.scala;
 
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
-import org.sugarj.ScalaLanguage;
 import org.sugarj.BaseLanguageRegistry;
+import org.sugarj.ScalaLanguage;
 
 /**
  * The activator class controls the plug-in life cycle

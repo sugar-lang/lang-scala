@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import org.spoofax.interpreter.terms.IStrategoTerm;
 import org.sugarj.common.ATermCommands;
@@ -75,8 +76,11 @@ public class ScalaProcessor extends AbstractBaseProcessor {
    * processing stuff follows here
    */
   @Override
-  public void init(RelativePath sourceFile, Environment environment) {
-    outFile = environment.createOutPath(FileCommands.dropExtension(sourceFile.getRelativePath()) + "." + ScalaLanguage.getInstance().getBaseFileExtension());
+  public void init(Set<RelativePath> sourceFiles, Environment environment) {
+    if (sourceFiles.size() != 1)
+      throw new IllegalArgumentException("Fomega can only compile one source file at a time.");
+    
+    outFile = environment.createOutPath(FileCommands.dropExtension(sourceFiles.iterator().next().getRelativePath()) + "." + ScalaLanguage.getInstance().getBaseFileExtension());
   }
 
   private void processNamespaceDecl(IStrategoTerm toplevelDecl) throws IOException {
