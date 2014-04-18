@@ -92,7 +92,7 @@
   CompilationUnit.2:iter -- _1,
   TopTmplDef.1:opt -- _1,
   TopTmplDef.2:iter-star -- _1,
-  QualId -- _1,
+  QualId -- H hs=0[_1],
   QualId.1:iter-sep -- _1 KW["."],
   Packaging -- KW["package"] _1 KW["{"] _2 KW["}"],
   Packaging.2:iter -- _1,
