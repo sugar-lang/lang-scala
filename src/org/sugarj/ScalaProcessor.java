@@ -84,7 +84,11 @@ public class ScalaProcessor extends AbstractBaseProcessor {
   }
 
   private void processNamespaceDecl(IStrategoTerm toplevelDecl) throws IOException {
-    namespaceName = extractNameFromPackageDeclaration(toplevelDecl);
+    String moduleName = extractNameFromPackageDeclaration(toplevelDecl);
+    if (moduleName == null)
+      namespaceName = null;
+    else
+      namespaceName = moduleName.replace(".", Environment.sep);
     moduleHeader = prettyPrint(toplevelDecl);
   }
 
