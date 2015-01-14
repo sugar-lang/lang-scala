@@ -88,7 +88,7 @@ public class ScalaProcessor extends AbstractBaseProcessor {
     if (moduleName == null)
       namespaceName = null;
     else
-      namespaceName = moduleName.replace(".", Environment.sep);
+      namespaceName = moduleName.replace(".", File.separator);
     moduleHeader = prettyPrint(toplevelDecl);
   }
 
