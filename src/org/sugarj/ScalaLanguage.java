@@ -17,7 +17,9 @@ import org.sugarj.common.path.Path;
 
 public class ScalaLanguage extends AbstractBaseLanguage {
 
-	private ScalaLanguage() { }
+	private static final long serialVersionUID = 2588391835468263327L;
+
+  private ScalaLanguage() { }
 
 	private static ScalaLanguage instance = new ScalaLanguage();
 
