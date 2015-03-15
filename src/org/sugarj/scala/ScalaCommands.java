@@ -11,8 +11,9 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.sugarj.common.CommandExecution;
-import org.sugarj.common.CommandExecution.ExecutionError;
+import org.sugarj.common.Exec;
+import org.sugarj.common.Exec.ExecutionError;
+import org.sugarj.common.Exec.ExecutionResult;
 import org.sugarj.common.path.AbsolutePath;
 import org.sugarj.common.path.Path;
 
@@ -26,15 +27,12 @@ public class ScalaCommands {
   public static List<Path> scalac(List<Path> outFiles, Path bin,
       List<Path> includePaths) {
     try {
-      String[][] output = new CommandExecution(true).
-          execute(buildArgs(outFiles, bin, includePaths));
-      String[] stderr = output[1];
-      List<Path> generatedFiles = parseForWrittenFiles(stderr);
+      ExecutionResult output = Exec.run(buildArgs(outFiles, bin, includePaths));
+      List<Path> generatedFiles = parseForWrittenFiles(output.errMsgs);
       return generatedFiles;
     } catch (ExecutionError e){
       try {
-        new CommandExecution(false).
-          execute(buildArgs(outFiles, bin, includePaths, false));
+        Exec.run(false, buildArgs(outFiles, bin, includePaths, false));
       } catch (ExecutionError _) {}
       return Collections.emptyList();
     }
@@ -47,7 +45,7 @@ public class ScalaCommands {
       FileWriter fw = new FileWriter(tmpFile);
       fw.write(String.format("import %s", modname));
       fw.close();
-      new CommandExecution(true).execute(buildArgs(tmpFile));
+      Exec.run(buildArgs(tmpFile));
       return true;
     } catch (IOException e) {
       e.printStackTrace();
